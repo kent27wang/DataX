@@ -69,11 +69,11 @@ public class ESClient {
             HostnameVerifier hostnameVerifier = NoopHostnameVerifier.INSTANCE;
             sslSocketFactory = new SSLConnectionSocketFactory(sslContext, hostnameVerifier);
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            log.error("build sslSocketFactory error", e);
         } catch (KeyManagementException e) {
-            e.printStackTrace();
+            log.error("build sslSocketFactory error", e);
         } catch (KeyStoreException e) {
-            e.printStackTrace();
+            log.error("build sslSocketFactory error", e);
         }
 
         Builder httpClientConfig = new HttpClientConfig
