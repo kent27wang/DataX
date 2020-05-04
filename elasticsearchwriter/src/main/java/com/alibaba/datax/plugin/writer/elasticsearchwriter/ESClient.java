@@ -58,35 +58,38 @@ public class ESClient {
                              boolean discovery) {
 
         JestClientFactory factory = new JestClientFactory();
-        SSLConnectionSocketFactory sslSocketFactory = null;
-        SSLContext sslContext = null;
-        try {
-            sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
-                public boolean isTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
-                    return true;
-                }
-            }).build();
-            HostnameVerifier hostnameVerifier = NoopHostnameVerifier.INSTANCE;
-            sslSocketFactory = new SSLConnectionSocketFactory(sslContext, hostnameVerifier);
-        } catch (NoSuchAlgorithmException e) {
-            log.error("build sslSocketFactory error", e);
-        } catch (KeyManagementException e) {
-            log.error("build sslSocketFactory error", e);
-        } catch (KeyStoreException e) {
-            log.error("build sslSocketFactory error", e);
-        }
 
         Builder httpClientConfig = new HttpClientConfig
                 .Builder(endpoint)
                 .setPreemptiveAuth(new HttpHost(endpoint))
                 .multiThreaded(multiThread)
                 .connTimeout(30000)
-                .sslSocketFactory(sslSocketFactory)
                 .readTimeout(readTimeout)
                 .maxTotalConnection(200)
                 .requestCompressionEnabled(compression)
                 .discoveryEnabled(discovery)
                 .discoveryFrequency(5l, TimeUnit.MINUTES);
+
+        if (endpoint.startsWith("https")) {
+            SSLConnectionSocketFactory sslSocketFactory = null;
+            SSLContext sslContext = null;
+            try {
+                sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
+                    public boolean isTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+                        return true;
+                    }
+                }).build();
+                HostnameVerifier hostnameVerifier = NoopHostnameVerifier.INSTANCE;
+                sslSocketFactory = new SSLConnectionSocketFactory(sslContext, hostnameVerifier);
+            } catch (NoSuchAlgorithmException e) {
+                log.error("build sslSocketFactory error", e);
+            } catch (KeyManagementException e) {
+                log.error("build sslSocketFactory error", e);
+            } catch (KeyStoreException e) {
+                log.error("build sslSocketFactory error", e);
+            }
+            httpClientConfig.sslSocketFactory(sslSocketFactory);
+        }
 
         if (!("".equals(user) || "".equals(passwd))) {
             httpClientConfig.defaultCredentials(user, passwd);
