@@ -17,10 +17,21 @@ import io.searchbox.indices.IndicesExists;
 import io.searchbox.indices.aliases.*;
 import io.searchbox.indices.mapping.PutMapping;
 import org.apache.http.HttpHost;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,19 +50,38 @@ public class ESClient {
     }
 
     public void createClient(String endpoint,
-                                   String user,
-                                   String passwd,
-                                   boolean multiThread,
-                                   int readTimeout,
-                                   boolean compression,
-                                   boolean discovery) {
+                             String user,
+                             String passwd,
+                             boolean multiThread,
+                             int readTimeout,
+                             boolean compression,
+                             boolean discovery) {
 
         JestClientFactory factory = new JestClientFactory();
+        SSLConnectionSocketFactory sslSocketFactory = null;
+        SSLContext sslContext = null;
+        try {
+            sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
+                public boolean isTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+                    return true;
+                }
+            }).build();
+            HostnameVerifier hostnameVerifier = NoopHostnameVerifier.INSTANCE;
+            sslSocketFactory = new SSLConnectionSocketFactory(sslContext, hostnameVerifier);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        }
+
         Builder httpClientConfig = new HttpClientConfig
                 .Builder(endpoint)
                 .setPreemptiveAuth(new HttpHost(endpoint))
                 .multiThreaded(multiThread)
                 .connTimeout(30000)
+                .sslSocketFactory(sslSocketFactory)
                 .readTimeout(readTimeout)
                 .maxTotalConnection(200)
                 .requestCompressionEnabled(compression)
