@@ -66,6 +66,7 @@ buildNumber.properties
 !/.mvn/wrapper/maven-wrapper.jar
 .idea
 *.iml
+<<<<<<< Updated upstream
 out
 gen### Python template
 __pycache__/
@@ -155,3 +156,4 @@ local.properties
 .cache-main
 .scala_dependencies
 .worksheet
+target/
