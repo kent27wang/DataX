@@ -342,7 +342,9 @@ public class ESWriter extends Writer {
                             case DATE:
                                 try {
                                     String dateStr = getDateStr(columnList.get(i), column);
-                                    data.put(columnName, dateStr);
+                                    if (dateStr != null || !Key.isIgnoreNull(conf)) {
+                                        data.put(columnName, dateStr);
+                                    }
                                 } catch (Exception e) {
                                     getTaskPluginCollector().collectDirtyRecord(record, String.format("时间类型解析失败 [%s:%s] exception: %s", columnName, column.toString(), e.toString()));
                                 }
@@ -352,32 +354,48 @@ public class ESWriter extends Writer {
                             case TEXT:
                             case IP:
                             case GEO_POINT:
-                                data.put(columnName, column.asString());
+                                if (column != null || !Key.isIgnoreNull(conf)) {
+                                    data.put(columnName, column.asString());
+                                }
                                 break;
                             case BOOLEAN:
-                                data.put(columnName, column.asBoolean());
+                                if (column != null || !Key.isIgnoreNull(conf)) {
+                                    data.put(columnName, column.asBoolean());
+                                }
                                 break;
                             case BYTE:
                             case BINARY:
-                                data.put(columnName, column.asBytes());
+                                if (column != null || !Key.isIgnoreNull(conf)) {
+                                    data.put(columnName, column.asBytes());
+                                }
                                 break;
                             case LONG:
-                                data.put(columnName, column.asLong());
+                                if (column != null || !Key.isIgnoreNull(conf)) {
+                                    data.put(columnName, column.asLong());
+                                }
                                 break;
                             case INTEGER:
-                                data.put(columnName, column.asBigInteger());
+                                if (column != null || !Key.isIgnoreNull(conf)) {
+                                    data.put(columnName, column.asBigInteger());
+                                }
                                 break;
                             case SHORT:
-                                data.put(columnName, column.asBigInteger());
+                                if (column != null || !Key.isIgnoreNull(conf)) {
+                                    data.put(columnName, column.asBigInteger());
+                                }
                                 break;
                             case FLOAT:
                             case DOUBLE:
-                                data.put(columnName, column.asDouble());
+                                if (column != null || !Key.isIgnoreNull(conf)) {
+                                    data.put(columnName, column.asDouble());
+                                }
                                 break;
                             case NESTED:
                             case OBJECT:
                             case GEO_SHAPE:
-                                data.put(columnName, JSON.parse(column.asString()));
+                                if (column != null || !Key.isIgnoreNull(conf)) {
+                                    data.put(columnName, JSON.parse(column.asString()));
+                                }
                                 break;
                             default:
                                 getTaskPluginCollector().collectDirtyRecord(record, "类型错误:不支持的类型:" + columnType + " " + columnName);
