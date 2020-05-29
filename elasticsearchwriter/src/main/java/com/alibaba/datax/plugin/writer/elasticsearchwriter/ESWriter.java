@@ -354,46 +354,46 @@ public class ESWriter extends Writer {
                             case TEXT:
                             case IP:
                             case GEO_POINT:
-                                if (column != null || !Key.isIgnoreNull(conf)) {
+                                if (column.getRawData() != null || !Key.isIgnoreNull(conf)) {
                                     data.put(columnName, column.asString());
                                 }
                                 break;
                             case BOOLEAN:
-                                if (column != null || !Key.isIgnoreNull(conf)) {
+                                if (column.getRawData() != null || !Key.isIgnoreNull(conf)) {
                                     data.put(columnName, column.asBoolean());
                                 }
                                 break;
                             case BYTE:
                             case BINARY:
-                                if (column != null || !Key.isIgnoreNull(conf)) {
+                                if (column.getRawData() != null || !Key.isIgnoreNull(conf)) {
                                     data.put(columnName, column.asBytes());
                                 }
                                 break;
                             case LONG:
-                                if (column != null || !Key.isIgnoreNull(conf)) {
+                                if (column.getRawData() != null || !Key.isIgnoreNull(conf)) {
                                     data.put(columnName, column.asLong());
                                 }
                                 break;
                             case INTEGER:
-                                if (column != null || !Key.isIgnoreNull(conf)) {
+                                if (column.getRawData() != null || !Key.isIgnoreNull(conf)) {
                                     data.put(columnName, column.asBigInteger());
                                 }
                                 break;
                             case SHORT:
-                                if (column != null || !Key.isIgnoreNull(conf)) {
+                                if (column.getRawData() != null || !Key.isIgnoreNull(conf)) {
                                     data.put(columnName, column.asBigInteger());
                                 }
                                 break;
                             case FLOAT:
                             case DOUBLE:
-                                if (column != null || !Key.isIgnoreNull(conf)) {
+                                if (column.getRawData() != null || !Key.isIgnoreNull(conf)) {
                                     data.put(columnName, column.asDouble());
                                 }
                                 break;
                             case NESTED:
                             case OBJECT:
                             case GEO_SHAPE:
-                                if (column != null || !Key.isIgnoreNull(conf)) {
+                                if (column.getRawData() != null || !Key.isIgnoreNull(conf)) {
                                     data.put(columnName, JSON.parse(column.asString()));
                                 }
                                 break;
