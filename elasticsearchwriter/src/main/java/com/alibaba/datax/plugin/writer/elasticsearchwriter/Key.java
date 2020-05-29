@@ -97,6 +97,10 @@ public final class Key {
         return conf.getBool("ignoreParseError", true);
     }
 
+    public static boolean isIgnoreNull(Configuration conf) {
+        return conf.getBool("ignoreNull", false);
+    }
+
 
     public static boolean isHighSpeedMode(Configuration conf) {
         if ("highspeed".equals(conf.getString("mode", ""))) {
